@@ -1,6 +1,10 @@
+<p align="center"><img src="assets/banner.svg" alt="sri-guard banner" width="100%"/></p>
+
 # sri-guard
 
-Subresource Integrity (SRI) checker for HTML pages: finds external scripts and stylesheets whose `integrity` metadata is missing, malformed, or does not match the actual resource content.
+[![CI](https://github.com/gravion-ux/sri-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/gravion-ux/sri-guard/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+
+**Subresource Integrity (SRI) checker for HTML pages: finds external scripts and stylesheets whose integrity metadata is missing, malformed, or does not match the actual resource con.**
 
 When a page loads a script or stylesheet from a CDN without an `integrity` attribute, a compromised CDN (or a compromised connection to it) can serve arbitrary code to your visitors. SRI lets the browser verify a cryptographic hash of the resource before using it. sri-guard audits your pages for the common ways that protection is absent or broken — offline by default, using only the Python standard library.
 
