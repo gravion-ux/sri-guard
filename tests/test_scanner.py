@@ -36,6 +36,22 @@ def test_missing_integrity_on_stylesheet_is_medium() -> None:
     assert findings[0].resource_type == "stylesheet"
 
 
+def test_missing_integrity_on_modulepreload_is_high() -> None:
+    html = '<link rel="modulepreload" href="https://cdn.example.com/app.mjs">'
+    findings = scan_html_text(html)
+    assert _codes(findings) == ["MISSING_INTEGRITY"]
+    assert findings[0].severity == Severity.HIGH
+    assert findings[0].resource_type == "modulepreload"
+
+
+def test_valid_modulepreload_integrity_with_crossorigin_is_clean() -> None:
+    html = (
+        f'<link rel="modulepreload" href="https://cdn.example.com/app.mjs" '
+        f'integrity="{_integrity(SCRIPT_BODY)}" crossorigin="anonymous">'
+    )
+    assert scan_html_text(html) == []
+
+
 def test_relative_urls_are_same_origin_exempt() -> None:
     html = (
         '<script src="/static/app.js"></script>'

@@ -1,10 +1,10 @@
 """HTML scanning for Subresource Integrity problems.
 
-The scanner walks ``<script src>`` and ``<link rel="stylesheet" href>``
-tags and reports missing, malformed, or mismatching integrity metadata
-on cross-origin resources. Relative URLs and resources matching the
-page origin (``--origin`` or the scanned URL's origin) are same-origin
-and exempt from the missing-integrity rule.
+The scanner walks ``<script src>``, ``<link rel="stylesheet" href>``, and
+``<link rel="modulepreload" href>`` tags and reports missing, malformed,
+or mismatching integrity metadata on cross-origin resources. Relative
+URLs and resources matching the page origin (``--origin`` or the scanned
+URL's origin) are same-origin and exempt from the missing-integrity rule.
 """
 
 from __future__ import annotations
@@ -46,7 +46,7 @@ SEVERITY_ORDER: dict[str, int] = {
 class Resource:
     """An external script or stylesheet referenced by a page."""
 
-    resource_type: str  # "script" or "stylesheet"
+    resource_type: str  # "script", "stylesheet", or "modulepreload"
     url: str
     integrity: str | None
     crossorigin: str | None
@@ -111,10 +111,12 @@ class _Collector(HTMLParser):
         elif tag == "link":
             rel = (attr.get("rel") or "").lower().split()
             href = (attr.get("href") or "").strip()
-            if "stylesheet" in rel and href:
+            if href and ("stylesheet" in rel or "modulepreload" in rel):
                 self.resources.append(
                     Resource(
-                        resource_type="stylesheet",
+                        resource_type=(
+                            "stylesheet" if "stylesheet" in rel else "modulepreload"
+                        ),
                         url=href,
                         integrity=attr.get("integrity"),
                         crossorigin=attr.get("crossorigin"),
@@ -275,7 +277,7 @@ def scan_html_text(
         if is_skippable_url(resource.url):
             continue
         cross_origin = is_cross_origin(resource.url, effective_origin)
-        script = resource.resource_type == "script"
+        script = resource.resource_type in {"script", "modulepreload"}
 
         if resource.integrity is None:
             if cross_origin:

@@ -4,7 +4,7 @@
 
 [![CI](https://github.com/gravion-ux/sri-guard/actions/workflows/ci.yml/badge.svg)](https://github.com/gravion-ux/sri-guard/actions/workflows/ci.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-**Subresource Integrity (SRI) checker for HTML pages: finds external scripts and stylesheets whose integrity metadata is missing, malformed, or does not match the actual resource con.**
+**Subresource Integrity (SRI) checker for HTML pages: finds external scripts, stylesheets, and module preloads whose integrity metadata is missing, malformed, or does not match the actual resource content.**
 
 When a page loads a script or stylesheet from a CDN without an `integrity` attribute, a compromised CDN (or a compromised connection to it) can serve arbitrary code to your visitors. SRI lets the browser verify a cryptographic hash of the resource before using it. sri-guard audits your pages for the common ways that protection is absent or broken — offline by default, using only the Python standard library.
 
@@ -12,8 +12,8 @@ When a page loads a script or stylesheet from a CDN without an `integrity` attri
 
 | Code | Severity | Meaning |
 | --- | --- | --- |
-| `MISSING_INTEGRITY` | high (script) / medium (stylesheet) | Cross-origin resource has no `integrity` attribute |
-| `MALFORMED_INTEGRITY` | high (script) / medium (stylesheet) | `integrity` is present but unparseable: unsupported algorithm, invalid base64, or wrong digest length |
+| `MISSING_INTEGRITY` | high (script/modulepreload) / medium (stylesheet) | Cross-origin resource has no `integrity` attribute |
+| `MALFORMED_INTEGRITY` | high (script/modulepreload) / medium (stylesheet) | `integrity` is present but unparseable: unsupported algorithm, invalid base64, or wrong digest length |
 | `INTEGRITY_MISMATCH` | high | Resource content (from `--mirror` or `--fetch`) does not match its integrity hash — the browser would block it |
 | `MISSING_CROSSORIGIN` | medium | Cross-origin resource has `integrity` but no `crossorigin` attribute, so SRI is not enforced |
 | `INLINE_SCRIPT` | info | Inline `<script>` block, which cannot carry SRI |
